@@ -1,117 +1,84 @@
 const board = document.getElementById("board");
-const scoreDisplay = document.getElementById("score");
-
+const scoreValue = document.getElementById("scoreValue");
 const width = 8;
-const candies = ['🍭', '🍬', '🍫', '🍪', '🧁', '🍩'];
-let grid = [];
+const candy = ['🍭', '🍬', '🍫', '🍪'];
 let score = 0;
+let squares = [];
 
 function createBoard() {
   for (let i = 0; i < width * width; i++) {
-    const cell = document.createElement("div");
-    cell.setAttribute("draggable", true);
-    cell.setAttribute("id", i);
-    cell.classList.add("cell");
-    const candy = candies[Math.floor(Math.random() * candies.length)];
-    cell.textContent = candy;
-    grid[i] = candy;
-    board.appendChild(cell);
+    const square = document.createElement('div');
+    square.classList.add('square');
+    square.setAttribute('draggable', true);
+    square.setAttribute('id', i);
+    square.innerText = candy[Math.floor(Math.random() * candy.length)];
+    board.appendChild(square);
+    squares.push(square);
   }
 }
 
-function dragDropSetup() {
-  const cells = document.querySelectorAll(".cell");
-  let dragged, replaced, draggedId, replacedId;
+function dragDropMechanics() {
+  let colorBeingDragged, colorBeingReplaced, squareIdBeingDragged, squareIdBeingReplaced;
 
-  cells.forEach(cell => {
-    cell.addEventListener("dragstart", () => {
-      dragged = cell.textContent;
-      draggedId = parseInt(cell.id);
-    });
-
-    cell.addEventListener("dragover", e => e.preventDefault());
-    cell.addEventListener("drop", () => {
-      replaced = cell.textContent;
-      replacedId = parseInt(cell.id);
-
-      const validMoves = [
-        draggedId - 1,
-        draggedId + 1,
-        draggedId - width,
-        draggedId + width
-      ];
-
-      if (validMoves.includes(replacedId)) {
-        grid[draggedId] = replaced;
-        grid[replacedId] = dragged;
-        document.getElementById(draggedId).textContent = replaced;
-        document.getElementById(replacedId).textContent = dragged;
-
-        checkMatch();
-      }
-    });
+  squares.forEach(square => {
+    square.addEventListener('dragstart', dragStart);
+    square.addEventListener('dragover', e => e.preventDefault());
+    square.addEventListener('drop', dragDrop);
+    square.addEventListener('dragend', dragEnd);
   });
+
+  function dragStart() {
+    colorBeingDragged = this.innerText;
+    squareIdBeingDragged = parseInt(this.id);
+  }
+
+  function dragDrop() {
+    colorBeingReplaced = this.innerText;
+    squareIdBeingReplaced = parseInt(this.id);
+    squares[squareIdBeingDragged].innerText = colorBeingReplaced;
+    squares[squareIdBeingReplaced].innerText = colorBeingDragged;
+  }
+
+  function dragEnd() {
+    checkMatches();
+  }
 }
 
-function checkMatch() {
-  let removed = false;
-
-  // linha
+function checkMatches() {
   for (let i = 0; i < width * width; i++) {
-    let rowEnd = Math.floor(i / width) * width + (width - 2);
-    if (i <= rowEnd) {
-      let trio = [i, i + 1, i + 2];
-      let candy = grid[i];
-      if (trio.every(idx => grid[idx] === candy)) {
-        trio.forEach(idx => {
-          grid[idx] = '';
-          document.getElementById(idx).textContent = '';
-        });
+    let rowOfThree = [i, i + 1, i + 2];
+    let columnOfThree = [i, i + width, i + width * 2];
+
+    let validRow = i % width < width - 2;
+    let validColumn = i < width * (width - 2);
+
+    if (validRow) {
+      let emoji = squares[i].innerText;
+      if (rowOfThree.every(index => squares[index].innerText === emoji)) {
+        rowOfThree.forEach(index => squares[index].innerText = candy[Math.floor(Math.random() * candy.length)]);
         score += 10;
-        removed = true;
+      }
+    }
+
+    if (validColumn) {
+      let emoji = squares[i].innerText;
+      if (columnOfThree.every(index => squares[index].innerText === emoji)) {
+        columnOfThree.forEach(index => squares[index].innerText = candy[Math.floor(Math.random() * candy.length)]);
+        score += 10;
       }
     }
   }
 
-  // coluna
-  for (let i = 0; i < width * (width - 2); i++) {
-    let trio = [i, i + width, i + width * 2];
-    let candy = grid[i];
-    if (trio.every(idx => grid[idx] === candy)) {
-      trio.forEach(idx => {
-        grid[idx] = '';
-        document.getElementById(idx).textContent = '';
-      });
-      score += 10;
-      removed = true;
-    }
-  }
-
-  if (removed) {
-    scoreDisplay.textContent = `Pontos: ${score}`;
-    setTimeout(dropCandies, 200);
-  }
+  scoreValue.textContent = score;
 }
 
-function dropCandies() {
-  for (let i = width * width - 1; i >= 0; i--) {
-    if (grid[i] === '') {
-      if (i - width >= 0) {
-        grid[i] = grid[i - width];
-        grid[i - width] = '';
-        document.getElementById(i).textContent = grid[i];
-        document.getElementById(i - width).textContent = '';
-      } else {
-        let newCandy = candies[Math.floor(Math.random() * candies.length)];
-        grid[i] = newCandy;
-        document.getElementById(i).textContent = newCandy;
-      }
-    }
-  }
-
-  setTimeout(checkMatch, 200);
+function updateBoard() {
+  setInterval(() => {
+    checkMatches();
+  }, 1000);
 }
 
+// Inicialização
 createBoard();
-dragDropSetup();
-setInterval(checkMatch, 1000);
+dragDropMechanics();
+updateBoard();

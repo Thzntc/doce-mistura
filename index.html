@@ -3,19 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🍬 Doce Mistura</title>
+  <title>Doce Mistura</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>🍭 Doce Mistura</h1>
-    <div class="menu">
-      <button id="toggleSound">🔊 Som</button>
-      <button id="reset">🔁 Reiniciar</button>
+  <div class="header">
+    <img src="assets/capa-doce-mistura.png" alt="Doce Mistura" class="logo" />
+    <h1>Doce Mistura 🍬</h1>
+    <div class="controls">
+      <button onclick="resetGame()">🔄 Reiniciar</button>
+      <button onclick="toggleSound()" id="soundBtn">🔊 Som: Ligado</button>
     </div>
-    <div id="score">Pontuação: <span id="scoreValue">0</span></div>
-  </header>
+  </div>
 
-  <div class="board" id="board"></div>
+  <div id="gameBoard" class="board"></div>
+  <div class="score">Pontuação: <span id="score">0</span></div>
 
-  <audio id="popSound" src="assets/pop.mp3" preload="auto
+  <audio id="popSound" src="assets/pop.mp3" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>

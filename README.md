@@ -9,7 +9,7 @@ Jogue e veja sua pontuação subindo enquanto se diverte com os docinhos!
 
 ---
 
-### ▶️ [Clique aqui para jogar agora] (https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO)
+### ▶️ [Clique aqui para jogar agora] (https://thzntc.github.io/doce-mistura/)
 
 ---
 

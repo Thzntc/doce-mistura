@@ -1,84 +1,99 @@
-const board = document.getElementById("board");
-const scoreValue = document.getElementById("scoreValue");
-const width = 8;
-const candy = ['🍭', '🍬', '🍫', '🍪'];
+const board = document.getElementById('board');
+const scoreValue = document.getElementById('scoreValue');
+const popSound = document.getElementById('popSound');
+const toggleSound = document.getElementById('toggleSound');
+const resetButton = document.getElementById('reset');
+
+const gridSize = 8;
+const candyColors = [
+  'red', 'yellow', 'green', 'blue', 'orange', 'purple'
+];
+let boardArray = [];
 let score = 0;
-let squares = [];
+let soundOn = true;
+
+toggleSound.addEventListener('click', () => {
+  soundOn = !soundOn;
+  toggleSound.textContent = soundOn ? '🔊 Som' : '🔇 Sem Som';
+});
+
+resetButton.addEventListener('click', () => {
+  score = 0;
+  scoreValue.textContent = score;
+  board.innerHTML = '';
+  boardArray = [];
+  init();
+});
 
 function createBoard() {
-  for (let i = 0; i < width * width; i++) {
-    const square = document.createElement('div');
-    square.classList.add('square');
-    square.setAttribute('draggable', true);
-    square.setAttribute('id', i);
-    square.innerText = candy[Math.floor(Math.random() * candy.length)];
-    board.appendChild(square);
-    squares.push(square);
+  for (let i = 0; i < gridSize * gridSize; i++) {
+    const cell = document.createElement('div');
+    cell.setAttribute('draggable', true);
+    cell.setAttribute('id', i);
+    cell.classList.add('cell');
+
+    const candy = document.createElement('img');
+    const color = getRandomColor();
+    candy.src = `https://raw.githubusercontent.com/alura-challenges/challenge-html-css-js-matching-game/main/assets/candies/${color}.png`;
+    candy.setAttribute('data-color', color);
+
+    cell.appendChild(candy);
+    board.appendChild(cell);
+    boardArray.push(cell);
   }
 }
 
-function dragDropMechanics() {
-  let colorBeingDragged, colorBeingReplaced, squareIdBeingDragged, squareIdBeingReplaced;
+function getRandomColor() {
+  return candyColors[Math.floor(Math.random() * candyColors.length)];
+}
 
-  squares.forEach(square => {
-    square.addEventListener('dragstart', dragStart);
-    square.addEventListener('dragover', e => e.preventDefault());
-    square.addEventListener('drop', dragDrop);
-    square.addEventListener('dragend', dragEnd);
-  });
+function swapCandies(id1, id2) {
+  const candy1 = boardArray[id1].querySelector('img');
+  const candy2 = boardArray[id2].querySelector('img');
 
-  function dragStart() {
-    colorBeingDragged = this.innerText;
-    squareIdBeingDragged = parseInt(this.id);
-  }
+  if (!candy1 || !candy2) return;
 
-  function dragDrop() {
-    colorBeingReplaced = this.innerText;
-    squareIdBeingReplaced = parseInt(this.id);
-    squares[squareIdBeingDragged].innerText = colorBeingReplaced;
-    squares[squareIdBeingReplaced].innerText = colorBeingDragged;
-  }
+  const src1 = candy1.src;
+  const src2 = candy2.src;
+  const color1 = candy1.getAttribute('data-color');
+  const color2 = candy2.getAttribute('data-color');
 
-  function dragEnd() {
-    checkMatches();
-  }
+  candy1.src = src2;
+  candy2.src = src1;
+  candy1.setAttribute('data-color', color2);
+  candy2.setAttribute('data-color', color1);
 }
 
 function checkMatches() {
-  for (let i = 0; i < width * width; i++) {
-    let rowOfThree = [i, i + 1, i + 2];
-    let columnOfThree = [i, i + width, i + width * 2];
+  let matchFound = false;
 
-    let validRow = i % width < width - 2;
-    let validColumn = i < width * (width - 2);
-
-    if (validRow) {
-      let emoji = squares[i].innerText;
-      if (rowOfThree.every(index => squares[index].innerText === emoji)) {
-        rowOfThree.forEach(index => squares[index].innerText = candy[Math.floor(Math.random() * candy.length)]);
-        score += 10;
-      }
-    }
-
-    if (validColumn) {
-      let emoji = squares[i].innerText;
-      if (columnOfThree.every(index => squares[index].innerText === emoji)) {
-        columnOfThree.forEach(index => squares[index].innerText = candy[Math.floor(Math.random() * candy.length)]);
-        score += 10;
-      }
+  // Check horizontal
+  for (let i = 0; i < 64; i++) {
+    if ((i % gridSize) > gridSize - 3) continue;
+    const c1 = boardArray[i].querySelector('img');
+    const c2 = boardArray[i + 1].querySelector('img');
+    const c3 = boardArray[i + 2].querySelector('img');
+    if (c1 && c2 && c3 && c1.getAttribute('data-color') === c2.getAttribute('data-color') && c2.getAttribute('data-color') === c3.getAttribute('data-color')) {
+      c1.classList.add('blink');
+      c2.classList.add('blink');
+      c3.classList.add('blink');
+      setTimeout(() => {
+        c1.remove();
+        c2.remove();
+        c3.remove();
+        updateScore(30);
+        if (soundOn) popSound.play();
+      }, 200);
+      matchFound = true;
     }
   }
 
-  scoreValue.textContent = score;
-}
-
-function updateBoard() {
-  setInterval(() => {
-    checkMatches();
-  }, 1000);
-}
-
-// Inicialização
-createBoard();
-dragDropMechanics();
-updateBoard();
+  // Check vertical
+  for (let i = 0; i < 47; i++) {
+    const c1 = boardArray[i].querySelector('img');
+    const c2 = boardArray[i + gridSize].querySelector('img');
+    const c3 = boardArray[i + gridSize * 2].querySelector('img');
+    if (c1 && c2 && c3 && c1.getAttribute('data-color') === c2.getAttribute('data-color') && c2.getAttribute('data-color') === c3.getAttribute('data-color')) {
+      c1.classList.add('blink');
+      c2.classList.add('blink');
+      c3.classList.

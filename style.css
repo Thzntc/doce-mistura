@@ -1,43 +1,77 @@
 body {
-  font-family: 'Arial Rounded MT Bold', sans-serif;
-  background: linear-gradient(135deg, #ffe3ec, #f9c6d0);
-  text-align: center;
-  padding: 20px;
+  background: linear-gradient(180deg, #ffe0f0, #fff0ff);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
   margin: 0;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 h1 {
   font-size: 2.5rem;
-  color: #d33a6a;
-  margin-bottom: 10px;
+  color: #ff3399;
+  margin: 0;
+}
+
+.menu {
+  margin: 1rem 0;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  font-size: 1rem;
+  background-color: #ff99cc;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #ff66aa;
 }
 
 #score {
   font-size: 1.2rem;
-  margin-bottom: 15px;
-  color: #333;
+  margin-bottom: 1rem;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(8, 50px);
   grid-template-rows: repeat(8, 50px);
-  gap: 4px;
-  justify-content: center;
-  margin: auto;
+  gap: 2px;
 }
 
-.square {
+.cell {
   width: 50px;
   height: 50px;
-  font-size: 24px;
-  background-color: white;
-  border-radius: 10px;
-  line-height: 50px;
-  cursor: pointer;
-  transition: transform 0.2s;
+  background-color: #fff;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
 }
 
-.square:hover {
-  transform: scale(1.1);
+.cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.blink {
+  animation: blink 0.3s ease;
+}
+
+@keyframes blink {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 1; }
 }

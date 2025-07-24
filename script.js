@@ -67,13 +67,15 @@ function swapCandies(id1, id2) {
 function checkMatches() {
   let matchFound = false;
 
-  // Check horizontal
+  // Horizontal
   for (let i = 0; i < 64; i++) {
     if ((i % gridSize) > gridSize - 3) continue;
     const c1 = boardArray[i].querySelector('img');
     const c2 = boardArray[i + 1].querySelector('img');
     const c3 = boardArray[i + 2].querySelector('img');
-    if (c1 && c2 && c3 && c1.getAttribute('data-color') === c2.getAttribute('data-color') && c2.getAttribute('data-color') === c3.getAttribute('data-color')) {
+    if (c1 && c2 && c3 &&
+        c1.getAttribute('data-color') === c2.getAttribute('data-color') &&
+        c2.getAttribute('data-color') === c3.getAttribute('data-color')) {
       c1.classList.add('blink');
       c2.classList.add('blink');
       c3.classList.add('blink');
@@ -88,12 +90,89 @@ function checkMatches() {
     }
   }
 
-  // Check vertical
+  // Vertical
   for (let i = 0; i < 47; i++) {
     const c1 = boardArray[i].querySelector('img');
     const c2 = boardArray[i + gridSize].querySelector('img');
     const c3 = boardArray[i + gridSize * 2].querySelector('img');
-    if (c1 && c2 && c3 && c1.getAttribute('data-color') === c2.getAttribute('data-color') && c2.getAttribute('data-color') === c3.getAttribute('data-color')) {
+    if (c1 && c2 && c3 &&
+        c1.getAttribute('data-color') === c2.getAttribute('data-color') &&
+        c2.getAttribute('data-color') === c3.getAttribute('data-color')) {
       c1.classList.add('blink');
       c2.classList.add('blink');
-      c3.classList.
+      c3.classList.add('blink');
+      setTimeout(() => {
+        c1.remove();
+        c2.remove();
+        c3.remove();
+        updateScore(30);
+        if (soundOn) popSound.play();
+      }, 200);
+      matchFound = true;
+    }
+  }
+
+  return matchFound;
+}
+
+function updateScore(points) {
+  score += points;
+  scoreValue.textContent = score;
+}
+
+function moveCandiesDown() {
+  for (let i = 55; i >= 0; i--) {
+    if (!boardArray[i + gridSize].querySelector('img')) {
+      const candy = boardArray[i].querySelector('img');
+      if (candy) {
+        boardArray[i + gridSize].appendChild(candy);
+      }
+    }
+  }
+
+  for (let i = 0; i < 8; i++) {
+    if (!boardArray[i].querySelector('img')) {
+      const newCandy = document.createElement('img');
+      const color = getRandomColor();
+      newCandy.src = `https://raw.githubusercontent.com/alura-challenges/challenge-html-css-js-matching-game/main/assets/candies/${color}.png`;
+      newCandy.setAttribute('data-color', color);
+      boardArray[i].appendChild(newCandy);
+    }
+  }
+}
+
+function dragEvents() {
+  let draggedId;
+
+  boardArray.forEach(cell => {
+    cell.addEventListener('dragstart', (e) => {
+      draggedId = parseInt(e.target.parentElement.id);
+    });
+
+    cell.addEventListener('dragover', (e) => e.preventDefault());
+
+    cell.addEventListener('drop', (e) => {
+      const targetId = parseInt(e.target.parentElement.id);
+      const validMoves = [draggedId - 1, draggedId + 1, draggedId - gridSize, draggedId + gridSize];
+      if (validMoves.includes(targetId)) {
+        swapCandies(draggedId, targetId);
+        setTimeout(() => {
+          if (!checkMatches()) {
+            swapCandies(draggedId, targetId); // desfaz se não houver combinação
+          }
+        }, 100);
+      }
+    });
+  });
+}
+
+function init() {
+  createBoard();
+  dragEvents();
+  setInterval(() => {
+    checkMatches();
+    moveCandiesDown();
+  }, 200);
+}
+
+init();

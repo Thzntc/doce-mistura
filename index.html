@@ -1,23 +1,21 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Doce Mistura</title>
+  <title>Doce Mistura 🍬</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <img src="assets/capa-doce-mistura.png" alt="Doce Mistura" class="logo" />
-
+    <img src="assets/capa-doce-mistura.png" alt="Capa Doce Mistura" class="header-img"/>
+    <h1>Doce Mistura</h1>
+    <div id="scoreBox">Pontuação: <span id="score">0</span></div>
+    <div id="board"></div>
     <div class="controls">
-      <button id="resetBtn">🔄 Reiniciar</button>
+      <button id="restart">🔁 Reiniciar</button>
       <button id="toggleSound">🔊 Som</button>
     </div>
-
-    <div id="game-board"></div>
-
-    <div id="score">Pontos: 0</div>
   </div>
 
   <audio id="popSound" src="assets/pop.mp3" preload="auto"></audio>

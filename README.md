@@ -1,35 +1,32 @@
-# 🍬 Doce Mistura — Um Jogo Match-3 Interativo
+# 🍬 Doce Mistura
 
-Bem-vindo ao Doce Mistura, um jogo estilo "Candy Crush" criado 100% com HTML, CSS e JavaScript!
+<div align="center">
+  <img src="assets/capa-doce-mistura.png" alt="Capa Doce Mistura" style="width: 100%; max-width: 500px;" />
+</div>
 
-👉 [Jogue agora](https://seunome.github.io/doce-mistura)
+Um jogo casual de combinar doces no estilo Match-3, feito com HTML, CSS e JavaScript.  
+Jogue e veja sua pontuação subindo enquanto se diverte com os docinhos!
 
-![Doce Mistura - preview](assets/capa-doce-mistura.png)
+---
 
-## 🎮 Como funciona
+### ▶️ [Clique aqui para jogar agora] (https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO)
 
-- Arraste e troque doces para formar linhas ou colunas com 3 ou mais iguais
-- Marque pontos e continue misturando
-- Feito para rodar direto no navegador (mobile e desktop)
+---
 
-## ✨ Recursos
+## 🕹️ Como jogar
 
-- Grid 8x8 animado com doces 🍭🍬🍫
-- Pontuação automática
-- Design leve e moderno
-- Código aberto — explore, copie e modifique
+- Arraste os doces para combinar 3 ou mais iguais.
+- Cada combinação dá pontos.
+- Jogue quantas vezes quiser!
 
-## 🚀 Tecnologias
+---
+
+## ✨ Tecnologias utilizadas
 
 - HTML
 - CSS
-- JavaScript puro
-
-## 💡 Próximos passos
-
-- Adicionar ranking e som
-- Versão mobile com tela cheia
-- Publicar como app Android via Thunkable ou Kodular
+- JavaScript puro (sem frameworks)
+- GitHub Pages para hospedagem
 
 ---
 

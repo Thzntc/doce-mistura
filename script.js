@@ -1,146 +1,110 @@
-const boardSize = 6;
 const board = document.getElementById("board");
 const scoreDisplay = document.getElementById("score");
 const restartBtn = document.getElementById("restart");
 const soundBtn = document.getElementById("toggleSound");
 const popSound = document.getElementById("popSound");
 
+const boardSize = 6;
+const emojis = ["🍒","🍋","🍇","🍏","🍊","🍉"];
 let tiles = [];
 let score = 0;
-let soundEnabled = true;
+let soundOn = true;
 
-const emojis = ["🍒", "🍋", "🍇", "🍏", "🍊", "🍉"];
-
-function createTile(row, col) {
-  const tile = document.createElement("div");
-  tile.className = "tile";
-  tile.dataset.row = row;
-  tile.dataset.col = col;
-  tile.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-  board.appendChild(tile);
-  return tile;
-}
-
-function generateBoard() {
+function startGame() {
   board.innerHTML = "";
   tiles = [];
-  for (let row = 0; row < boardSize; row++) {
-    tiles[row] = [];
-    for (let col = 0; col < boardSize; col++) {
-      const tile = createTile(row, col);
-      tiles[row][col] = tile;
+  score = 0;
+  scoreDisplay.innerText = score;
+  for (let r = 0; r < boardSize; r++) {
+    tiles[r] = [];
+    for (let c = 0; c < boardSize; c++) {
+      const tile = document.createElement("div");
+      tile.className = "tile";
+      tile.dataset.row = r;
+      tile.dataset.col = c;
+      tile.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+      tile.addEventListener("click", onClickTile);
+      board.appendChild(tile);
+      tiles[r][c] = tile;
     }
   }
 }
 
 let firstTile = null;
 
-function handleClick(e) {
-  const tile = e.target;
-  if (!tile.classList.contains("tile")) return;
-
+function onClickTile(e) {
+  const tile = e.currentTarget;
   if (!firstTile) {
     firstTile = tile;
-    tile.style.border = "2px solid #ff69b4";
+    tile.classList.add("selected");
   } else {
     swapTiles(firstTile, tile);
-    firstTile.style.border = "none";
+    firstTile.classList.remove("selected");
     firstTile = null;
   }
 }
 
-function swapTiles(tile1, tile2) {
-  if (!areAdjacent(tile1, tile2)) return;
-
-  const temp = tile1.textContent;
-  tile1.textContent = tile2.textContent;
-  tile2.textContent = temp;
-
-  if (!checkMatches()) {
-    // Reverte se não houver combinação
-    setTimeout(() => {
-      tile1.textContent = temp;
-      tile2.textContent = tile1.textContent;
-    }, 300);
-  }
-}
-
-function areAdjacent(t1, t2) {
-  const r1 = parseInt(t1.dataset.row), c1 = parseInt(t1.dataset.col);
-  const r2 = parseInt(t2.dataset.row), c2 = parseInt(t2.dataset.col);
-  return (Math.abs(r1 - r2) + Math.abs(c1 - c2)) === 1;
-}
-
-function checkMatches() {
-  let matched = [];
-
-  // Horizontal
-  for (let row = 0; row < boardSize; row++) {
-    for (let col = 0; col < boardSize - 2; col++) {
-      const t1 = tiles[row][col];
-      const t2 = tiles[row][col + 1];
-      const t3 = tiles[row][col + 2];
-      if (
-        t1.textContent === t2.textContent &&
-        t2.textContent === t3.textContent
-      ) {
-        matched.push(t1, t2, t3);
-      }
-    }
-  }
-
-  // Vertical
-  for (let col = 0; col < boardSize; col++) {
-    for (let row = 0; row < boardSize - 2; row++) {
-      const t1 = tiles[row][col];
-      const t2 = tiles[row + 1][col];
-      const t3 = tiles[row + 2][col];
-      if (
-        t1.textContent === t2.textContent &&
-        t2.textContent === t3.textContent
-      ) {
-        matched.push(t1, t2, t3);
-      }
-    }
-  }
-
-  if (matched.length > 0) {
-    removeMatches(matched);
-    return true;
-  }
-  return false;
-}
-
-function removeMatches(matched) {
-  matched.forEach(tile => {
-    tile.classList.add("removing");
-  });
+function swapTiles(a, b) {
+  const r1 = a.dataset.row, c1 = a.dataset.col;
+  const r2 = b.dataset.row, c2 = b.dataset.col;
+  if (Math.abs(r1 - r2) + Math.abs(c1 - c2) !== 1) return;
+  const temp = a.innerText;
+  a.innerText = b.innerText;
+  b.innerText = temp;
 
   setTimeout(() => {
-    matched.forEach(tile => {
-      tile.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      tile.classList.remove("removing");
-    });
-
-    score += matched.length;
-    scoreDisplay.textContent = score;
-    if (soundEnabled) popSound.play();
-
-    setTimeout(checkMatches, 300);
-  }, 400);
+    if (!checkMatch()) {
+      // desfaz se não tiver combinação
+      a.innerText = temp;
+      b.innerText = a.innerText;
+    }
+  }, 200);
 }
 
-restartBtn.addEventListener("click", () => {
-  score = 0;
-  scoreDisplay.textContent = score;
-  generateBoard();
-});
+function checkMatch() {
+  let matched = new Set();
+  for (let r = 0; r < boardSize; r++) {
+    for (let c = 0; c < boardSize - 2; c++) {
+      const t1 = tiles[r][c], t2 = tiles[r][c+1], t3 = tiles[r][c+2];
+      if (t1.innerText === t2.innerText && t2.innerText === t3.innerText) {
+        [t1, t2, t3].forEach(t => matched.add(t));
+      }
+    }
+  }
+  for (let c = 0; c < boardSize; c++) {
+    for (let r = 0; r < boardSize - 2; r++) {
+      const t1 = tiles[r][c], t2 = tiles[r+1][c], t3 = tiles[r+2][c];
+      if (t1.innerText === t2.innerText && t2.innerText === t3.innerText) {
+        [t1, t2, t3].forEach(t => matched.add(t));
+      }
+    }
+  }
+  if (matched.size === 0) return false;
+  matched.forEach(t => {
+    t.classList.add("removing");
+    if (soundOn) popSound.play();
+  });
+  score += matched.size;
+  scoreDisplay.innerText = score;
 
-soundBtn.addEventListener("click", () => {
-  soundEnabled = !soundEnabled;
-  soundBtn.textContent = soundEnabled ? "🔊 Som" : "🔇 Som";
-});
+  setTimeout(() => {
+    matched.forEach(t => {
+      t.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+      t.classList.remove("removing");
+    });
+    checkMatch();
+  }, 400);
 
-board.addEventListener("click", handleClick);
+  return true;
+}
 
-generateBoard();
+function toggleSound() {
+  soundOn = !soundOn;
+  soundBtn.innerText = soundOn ? "🔊 Som" : "🔇 Som";
+}
+
+restartBtn.addEventListener("click", startGame);
+soundBtn.addEventListener("click", toggleSound);
+board.addEventListener("click", e => { if (!firstTile) return; });
+
+startGame();

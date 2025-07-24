@@ -1,178 +1,147 @@
-const board = document.getElementById('board');
-const scoreValue = document.getElementById('scoreValue');
-const popSound = document.getElementById('popSound');
-const toggleSound = document.getElementById('toggleSound');
-const resetButton = document.getElementById('reset');
+const board = document.getElementById("gameBoard");
+const scoreDisplay = document.getElementById("score");
+const popSound = document.getElementById("popSound");
+const soundBtn = document.getElementById("soundBtn");
 
-const gridSize = 8;
-const candyColors = [
-  'red', 'yellow', 'green', 'blue', 'orange', 'purple'
-];
-let boardArray = [];
+const candies = ["🍭", "🍬", "🍫", "🍡", "🍩"];
+let tiles = [];
+let selected = null;
 let score = 0;
 let soundOn = true;
 
-toggleSound.addEventListener('click', () => {
+function toggleSound() {
   soundOn = !soundOn;
-  toggleSound.textContent = soundOn ? '🔊 Som' : '🔇 Sem Som';
-});
+  soundBtn.innerText = soundOn ? "🔊 Som: Ligado" : "🔇 Som: Desligado";
+}
 
-resetButton.addEventListener('click', () => {
+function resetGame() {
+  tiles = [];
+  board.innerHTML = "";
   score = 0;
-  scoreValue.textContent = score;
-  board.innerHTML = '';
-  boardArray = [];
-  init();
-});
+  scoreDisplay.innerText = score;
+  initBoard();
+  checkMatches();
+}
 
-function createBoard() {
-  for (let i = 0; i < gridSize * gridSize; i++) {
-    const cell = document.createElement('div');
-    cell.setAttribute('draggable', true);
-    cell.setAttribute('id', i);
-    cell.classList.add('cell');
-
-    const candy = document.createElement('img');
-    const color = getRandomColor();
-    candy.src = `https://raw.githubusercontent.com/alura-challenges/challenge-html-css-js-matching-game/main/assets/candies/${color}.png`;
-    candy.setAttribute('data-color', color);
-
-    cell.appendChild(candy);
-    board.appendChild(cell);
-    boardArray.push(cell);
+function initBoard() {
+  for (let i = 0; i < 64; i++) {
+    const tile = document.createElement("div");
+    tile.classList.add("tile");
+    tile.dataset.index = i;
+    tile.innerText = getRandomCandy();
+    tile.addEventListener("click", handleClick);
+    board.appendChild(tile);
+    tiles.push(tile);
   }
 }
 
-function getRandomColor() {
-  return candyColors[Math.floor(Math.random() * candyColors.length)];
+function getRandomCandy() {
+  return candies[Math.floor(Math.random() * candies.length)];
 }
 
-function swapCandies(id1, id2) {
-  const candy1 = boardArray[id1].querySelector('img');
-  const candy2 = boardArray[id2].querySelector('img');
+function handleClick(e) {
+  const tile = e.currentTarget;
 
-  if (!candy1 || !candy2) return;
+  if (selected === tile) {
+    tile.classList.remove("selected");
+    selected = null;
+    return;
+  }
 
-  const src1 = candy1.src;
-  const src2 = candy2.src;
-  const color1 = candy1.getAttribute('data-color');
-  const color2 = candy2.getAttribute('data-color');
+  if (selected) {
+    swapTiles(selected, tile);
+    selected.classList.remove("selected");
+    selected = null;
+  } else {
+    tile.classList.add("selected");
+    selected = tile;
+  }
+}
 
-  candy1.src = src2;
-  candy2.src = src1;
-  candy1.setAttribute('data-color', color2);
-  candy2.setAttribute('data-color', color1);
+function swapTiles(a, b) {
+  const i = parseInt(a.dataset.index);
+  const j = parseInt(b.dataset.index);
+
+  const [xi, yi] = [i % 8, Math.floor(i / 8)];
+  const [xj, yj] = [j % 8, Math.floor(j / 8)];
+
+  if (Math.abs(xi - xj) + Math.abs(yi - yj) !== 1) return;
+
+  const temp = a.innerText;
+  a.innerText = b.innerText;
+  b.innerText = temp;
+
+  setTimeout(() => {
+    if (!checkMatches()) {
+      // Desfaz se não houver combinação
+      const temp2 = a.innerText;
+      a.innerText = b.innerText;
+      b.innerText = temp2;
+    }
+  }, 150);
 }
 
 function checkMatches() {
-  let matchFound = false;
+  let matched = new Set();
 
-  // Horizontal
-  for (let i = 0; i < 64; i++) {
-    if ((i % gridSize) > gridSize - 3) continue;
-    const c1 = boardArray[i].querySelector('img');
-    const c2 = boardArray[i + 1].querySelector('img');
-    const c3 = boardArray[i + 2].querySelector('img');
-    if (c1 && c2 && c3 &&
-        c1.getAttribute('data-color') === c2.getAttribute('data-color') &&
-        c2.getAttribute('data-color') === c3.getAttribute('data-color')) {
-      c1.classList.add('blink');
-      c2.classList.add('blink');
-      c3.classList.add('blink');
-      setTimeout(() => {
-        c1.remove();
-        c2.remove();
-        c3.remove();
-        updateScore(30);
-        if (soundOn) popSound.play();
-      }, 200);
-      matchFound = true;
-    }
-  }
-
-  // Vertical
-  for (let i = 0; i < 47; i++) {
-    const c1 = boardArray[i].querySelector('img');
-    const c2 = boardArray[i + gridSize].querySelector('img');
-    const c3 = boardArray[i + gridSize * 2].querySelector('img');
-    if (c1 && c2 && c3 &&
-        c1.getAttribute('data-color') === c2.getAttribute('data-color') &&
-        c2.getAttribute('data-color') === c3.getAttribute('data-color')) {
-      c1.classList.add('blink');
-      c2.classList.add('blink');
-      c3.classList.add('blink');
-      setTimeout(() => {
-        c1.remove();
-        c2.remove();
-        c3.remove();
-        updateScore(30);
-        if (soundOn) popSound.play();
-      }, 200);
-      matchFound = true;
-    }
-  }
-
-  return matchFound;
-}
-
-function updateScore(points) {
-  score += points;
-  scoreValue.textContent = score;
-}
-
-function moveCandiesDown() {
-  for (let i = 55; i >= 0; i--) {
-    if (!boardArray[i + gridSize].querySelector('img')) {
-      const candy = boardArray[i].querySelector('img');
-      if (candy) {
-        boardArray[i + gridSize].appendChild(candy);
+  // Linhas
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 6; col++) {
+      const i = row * 8 + col;
+      const match = [i, i + 1, i + 2];
+      if (tiles[i].innerText === tiles[i + 1].innerText &&
+          tiles[i].innerText === tiles[i + 2].innerText) {
+        match.forEach(m => matched.add(m));
       }
     }
   }
 
-  for (let i = 0; i < 8; i++) {
-    if (!boardArray[i].querySelector('img')) {
-      const newCandy = document.createElement('img');
-      const color = getRandomColor();
-      newCandy.src = `https://raw.githubusercontent.com/alura-challenges/challenge-html-css-js-matching-game/main/assets/candies/${color}.png`;
-      newCandy.setAttribute('data-color', color);
-      boardArray[i].appendChild(newCandy);
+  // Colunas
+  for (let col = 0; col < 8; col++) {
+    for (let row = 0; row < 6; row++) {
+      const i = row * 8 + col;
+      const match = [i, i + 8, i + 16];
+      if (tiles[i].innerText === tiles[i + 8].innerText &&
+          tiles[i].innerText === tiles[i + 16].innerText) {
+        match.forEach(m => matched.add(m));
+      }
     }
   }
-}
 
-function dragEvents() {
-  let draggedId;
+  if (matched.size === 0) return false;
 
-  boardArray.forEach(cell => {
-    cell.addEventListener('dragstart', (e) => {
-      draggedId = parseInt(e.target.parentElement.id);
-    });
-
-    cell.addEventListener('dragover', (e) => e.preventDefault());
-
-    cell.addEventListener('drop', (e) => {
-      const targetId = parseInt(e.target.parentElement.id);
-      const validMoves = [draggedId - 1, draggedId + 1, draggedId - gridSize, draggedId + gridSize];
-      if (validMoves.includes(targetId)) {
-        swapCandies(draggedId, targetId);
-        setTimeout(() => {
-          if (!checkMatches()) {
-            swapCandies(draggedId, targetId); // desfaz se não houver combinação
-          }
-        }, 100);
-      }
-    });
+  matched.forEach(i => {
+    tiles[i].innerText = "";
+    if (soundOn) popSound.play();
+    score += 10;
+    scoreDisplay.innerText = score;
   });
+
+  setTimeout(dropCandies, 200);
+  return true;
 }
 
-function init() {
-  createBoard();
-  dragEvents();
-  setInterval(() => {
-    checkMatches();
-    moveCandiesDown();
-  }, 200);
+function dropCandies() {
+  for (let col = 0; col < 8; col++) {
+    let empty = [];
+    for (let row = 7; row >= 0; row--) {
+      const i = row * 8 + col;
+      if (tiles[i].innerText === "") {
+        empty.push(i);
+      } else if (empty.length > 0) {
+        const target = empty.shift();
+        tiles[target].innerText = tiles[i].innerText;
+        tiles[i].innerText = "";
+        empty.push(i);
+      }
+    }
+
+    for (let i of empty) {
+      tiles[i].innerText = getRandomCandy();
+    }
+  }
+
+  setTimeout(checkMatches, 200);
 }
 
-init();
+resetGame();

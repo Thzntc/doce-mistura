@@ -33,4 +33,4 @@ Bem-vindo ao Doce Mistura, um jogo estilo "Candy Crush" criado 100% com HTML, CS
 
 ---
 
-Feito com ❤️ por [Seu Nome]
+Feito com ❤️ por Thiago Rocha

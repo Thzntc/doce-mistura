@@ -1,90 +1,87 @@
-:root {
-  --bg-color: #faf0ff;
-  --tile-size: 60px;
-  --transition-time: 0.3s;
-}
-
 body {
   margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(135deg, #ffe9f0, #f3f0ff);
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(145deg, #f8d5ec, #e4f1fb);
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
   min-height: 100vh;
 }
 
 .container {
-  padding: 20px;
-  max-width: 420px;
-  width: 100%;
   text-align: center;
+  padding: 20px;
 }
 
-.logo {
-  width: 80%;
+.header-img {
   max-width: 300px;
-  margin-bottom: 10px;
   border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  margin-bottom: 15px;
 }
 
-#game-board {
+h1 {
+  font-size: 2.2rem;
+  color: #d34e95;
+  margin-bottom: 10px;
+}
+
+#scoreBox {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+#board {
   display: grid;
-  grid-template-columns: repeat(6, var(--tile-size));
-  grid-template-rows: repeat(6, var(--tile-size));
-  gap: 4px;
-  margin: 15px auto;
+  grid-template-columns: repeat(6, 60px);
+  gap: 6px;
   justify-content: center;
+  margin-bottom: 15px;
 }
 
 .tile {
-  width: var(--tile-size);
-  height: var(--tile-size);
-  border-radius: 10px;
-  background-color: #ddd;
+  width: 60px;
+  height: 60px;
+  font-size: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 28px;
+  justify-content: center;
   cursor: pointer;
-  transition: transform var(--transition-time), opacity var(--transition-time);
-  user-select: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease, opacity 0.3s;
+}
+
+.tile:hover {
+  transform: scale(1.05);
 }
 
 .tile.selected {
-  outline: 3px solid #f39;
-  transform: scale(1.1);
+  border: 3px solid #ff8cd6;
 }
 
-.tile.remove {
+.tile.removing {
   opacity: 0;
-  transform: scale(0.5);
-}
-
-#score {
-  font-size: 20px;
-  margin-top: 10px;
-  color: #5c2d91;
+  transform: scale(0.6);
 }
 
 .controls {
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 button {
-  padding: 8px 14px;
-  margin: 4px;
+  background-color: #ff73c2;
+  color: white;
   border: none;
-  border-radius: 8px;
-  background-color: #aa52ec;
-  color: #fff;
-  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
+  margin: 5px;
+  transition: background 0.2s;
 }
 
 button:hover {
-  background-color: #8a38c9;
+  background-color: #e85cab;
 }

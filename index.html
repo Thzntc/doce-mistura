@@ -2,14 +2,20 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doce Mistura 🍬</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🍬 Doce Mistura</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>🍭 Doce Mistura</h1>
-  <div id="score">Pontuação: <span id="scoreValue">0</span></div>
+  <header>
+    <h1>🍭 Doce Mistura</h1>
+    <div class="menu">
+      <button id="toggleSound">🔊 Som</button>
+      <button id="reset">🔁 Reiniciar</button>
+    </div>
+    <div id="score">Pontuação: <span id="scoreValue">0</span></div>
+  </header>
+
   <div class="board" id="board"></div>
-  <script src="script.js"></script>
-</body>
-</html>
+
+  <audio id="popSound" src="assets/pop.mp3" preload="auto

@@ -7,20 +7,20 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="header">
+  <div class="container">
     <img src="assets/capa-doce-mistura.png" alt="Doce Mistura" class="logo" />
-    <h1>Doce Mistura 🍬</h1>
+
     <div class="controls">
-      <button onclick="resetGame()">🔄 Reiniciar</button>
-      <button onclick="toggleSound()" id="soundBtn">🔊 Som: Ligado</button>
+      <button id="resetBtn">🔄 Reiniciar</button>
+      <button id="toggleSound">🔊 Som</button>
     </div>
+
+    <div id="game-board"></div>
+
+    <div id="score">Pontos: 0</div>
   </div>
 
-  <div id="gameBoard" class="board"></div>
-  <div class="score">Pontuação: <span id="score">0</span></div>
-
   <audio id="popSound" src="assets/pop.mp3" preload="auto"></audio>
-
   <script src="script.js"></script>
 </body>
 </html>

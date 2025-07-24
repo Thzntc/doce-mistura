@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -9,16 +9,15 @@
 <body>
   <div class="container">
     <img src="assets/capa-doce-mistura.png" alt="Capa Doce Mistura" class="header-img"/>
-    <h1>Doce Mistura</h1>
+    <h1>🍬 Doce Mistura</h1>
     <div id="scoreBox">Pontuação: <span id="score">0</span></div>
     <div id="board"></div>
     <div class="controls">
-      <button id="restart">🔁 Reiniciar</button>
-      <button id="toggleSound">🔊 Som</button>
+      <button onclick="resetGame()">Reiniciar</button>
+      <button onclick="toggleSound()">Som: <span id="soundState">On</span></button>
     </div>
   </div>
 
-  <audio id="popSound" src="assets/pop.mp3" preload="auto"></audio>
   <script src="script.js"></script>
 </body>
 </html>

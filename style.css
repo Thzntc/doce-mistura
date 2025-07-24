@@ -1,38 +1,43 @@
 body {
-  background: linear-gradient(to right, #ffd1dc, #ffe9ec);
-  font-family: 'Arial', sans-serif;
+  font-family: 'Arial Rounded MT Bold', sans-serif;
+  background: linear-gradient(135deg, #ffe3ec, #f9c6d0);
   text-align: center;
   padding: 20px;
+  margin: 0;
 }
 
 h1 {
   font-size: 2.5rem;
-  color: #d6336c;
+  color: #d33a6a;
+  margin-bottom: 10px;
 }
 
 #score {
   font-size: 1.2rem;
-  margin: 10px;
+  margin-bottom: 15px;
   color: #333;
 }
 
-#board {
-  width: 320px;
-  height: 320px;
+.board {
   display: grid;
-  grid-template-columns: repeat(8, 40px);
-  grid-template-rows: repeat(8, 40px);
-  gap: 2px;
-  margin: 0 auto;
+  grid-template-columns: repeat(8, 50px);
+  grid-template-rows: repeat(8, 50px);
+  gap: 4px;
+  justify-content: center;
+  margin: auto;
 }
 
-.cell {
-  width: 40px;
-  height: 40px;
+.square {
+  width: 50px;
+  height: 50px;
   font-size: 24px;
-  line-height: 40px;
-  background: white;
-  border-radius: 6px;
+  background-color: white;
+  border-radius: 10px;
+  line-height: 50px;
   cursor: pointer;
-  user-select: none;
+  transition: transform 0.2s;
+}
+
+.square:hover {
+  transform: scale(1.1);
 }
